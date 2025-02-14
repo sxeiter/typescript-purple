@@ -13,6 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
+var Gender;
+(function (Gender) {
+    Gender["Male"] = "male";
+    Gender["Female"] = "female";
+    Gender["Other"] = "other";
+})(Gender || (Gender = {}));
 const api = 'https://dummyjson.com/users';
 const fetchUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

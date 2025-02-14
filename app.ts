@@ -1,12 +1,18 @@
 import axios from 'axios';
 
+enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other'
+}
+
 interface UserData {
   id: number,
   firstName: string,
   lastName: string,
   maidenName: string,
   age: number,
-  gender: string,
+  gender: Gender,
   email: string,
   phone: string,
   username: string,
