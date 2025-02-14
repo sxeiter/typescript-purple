@@ -1,73 +1,106 @@
-const TEN = 10;
-const ONE_HUNDRED = 100;
-const ONE_THOUSAND = 1000;
-const ONE_MILLION = 1000000;
-const ONE_BILLION = 1000000000;
-const ONE_TRILLION = 1000000000000;
-const ONE_QUADRILLION = 1000000000000000;
-const MAX = 9007199254740992;
+import axios from 'axios';
 
-const LESS_THAN_TWENTY: string[] = [
-    'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-    'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
-];
-
-const TENTHS_LESS_THAN_HUNDRED: string[] = [
-    'zero', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
-];
-
-function toWords(number: number | string, asOrdinal?: boolean): string {
-    const num = parseInt(number as string, 10);
-    if (!isFinite(num)) {
-        throw new TypeError(`Not a finite number: ${number} (${typeof number})`);
+interface UserData {
+  id: number,
+  firstName: string,
+  lastName: string,
+  maidenName: string,
+  age: number,
+  gender: string,
+  email: string,
+  phone: string,
+  username: string,
+  password: string,
+  birthDate: string,
+  image: string,
+  bloodGroup: string,
+  height: number,
+  weight: number,
+  eyeColor: string,
+  hair: {
+    color: string,
+    type: string,
+  },
+  ip: string,
+  address: {
+    address: string,
+    city: string,
+    state: string,
+    stateCode: string,
+    postalCode: string,
+    coordinates: {
+      lat: number,
+      lng: number
+    },
+    country: string
+  },
+  macAddress: string,
+  university: string,
+  bank: {
+    cardExpire: string,
+    cardNumber: string,
+    cardType: string,
+    currency: string,
+    iban: string
+  },
+  company: {
+    department: string,
+    name: string,
+    title: string,
+    address: {
+      address: string,
+      city: string,
+      state: string,
+      stateCode: string,
+      postalCode: string,
+      coordinates: {
+        lat: number,
+        lng: number
+      },
+      country: string
     }
+  },
+  ein: string,
+  ssn: string,
+  userAgent: string,
+  crypto: {
+    coin: string,
+    wallet: string,
+    network: string
+  },
+  role: string
+} 
 
-    const words = generateWords(num);
-    return asOrdinal ? makeOrdinal(words) : words.join(' ');
+interface UserResponse {
+  users: UserData[];
+  total: number;
+  skip: number;
+  limit: number;
 }
 
-function generateWords(number: number, words?: string[]): string[] {
-    if (number === 0) {
-        return words ? words : ['zero'];
+const api = 'https://dummyjson.com/users';
+
+const fetchUsers = async (): Promise<UserResponse | null> => {
+  try {
+    const res = await axios.get<UserResponse>(api);
+    return res.data;
+  } catch(error) {
+    if (axios.isAxiosError(error)) {
+      console.error('ошибка запроса: ', error.message)
+    } else {
+      console.error('ошибка', error)
     }
-
-    if (!words) {
-        words = [];
-    }
-
-    if (number < 0) {
-        words.push('minus');
-        number = Math.abs(number);
-    }
-
-    let word: string;
-
-    if (number < 20) {
-        word = LESS_THAN_TWENTY[number];
-    } else if (number < ONE_HUNDRED) {
-        const remainder = number % TEN;
-        word = TENTHS_LESS_THAN_HUNDRED[Math.floor(number / TEN)];
-        if (remainder) {
-            word += '-' + LESS_THAN_TWENTY[remainder];
-        }
-    } else if (number < ONE_THOUSAND) {
-        word = generateWords(Math.floor(number / ONE_HUNDRED)).join(' ') + ' hundred';
-    } else if (number < ONE_MILLION) {
-        word = generateWords(Math.floor(number / ONE_THOUSAND)).join(' ') + ' thousand';
-    } else if (number < ONE_BILLION) {
-        word = generateWords(Math.floor(number / ONE_MILLION)).join(' ') + ' million';
-    } else if (number < ONE_TRILLION) {
-        word = generateWords(Math.floor(number / ONE_BILLION)).join(' ') + ' billion';
-    } else if (number < ONE_QUADRILLION) {
-        word = generateWords(Math.floor(number / ONE_TRILLION)).join(' ') + ' trillion';
-    } else if (number <= MAX) {
-        word = generateWords(Math.floor(number / ONE_QUADRILLION)).join(' ') + ' quadrillion';
-    }
-
-    words.push(word);
-    return generateWords(number % (number < ONE_HUNDRED ? TEN : (number < ONE_THOUSAND ? ONE_HUNDRED : (number < ONE_MILLION ? ONE_THOUSAND : (number < ONE_BILLION ? ONE_MILLION : (number < ONE_TRILLION ? ONE_BILLION : ONE_QUADRILLION))))), words);
+    return null;
+  }
 }
 
-// не совсем понял что делать с:
-// Не удается найти имя "makeOrdinal". Вы имели в виду "asOrdinal"? и 
-// Переменная "word" используется перед назначением.
+const getUsers = async () => {
+  const userResponse = await fetchUsers();
+  if (userResponse) {
+    console.log('список пользователей: ', userResponse.users)
+  } else {
+    console.log('ошибка получения пользователей')
+  }
+}
+
+getUsers();
