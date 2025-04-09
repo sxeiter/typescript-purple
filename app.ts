@@ -1,112 +1,135 @@
-import axios from 'axios';
 
-enum Gender {
-  Male = 'male',
-  Female = 'female',
-  Other = 'other'
-}
+//корзина товаров
 
-interface UserData {
-  id: number,
-  firstName: string,
-  lastName: string,
-  maidenName: string,
-  age: number,
-  gender: Gender,
-  email: string,
-  phone: string,
-  username: string,
-  password: string,
-  birthDate: string,
-  image: string,
-  bloodGroup: string,
-  height: number,
-  weight: number,
-  eyeColor: string,
-  hair: {
-    color: string,
-    type: string,
-  },
-  ip: string,
-  address: {
-    address: string,
-    city: string,
-    state: string,
-    stateCode: string,
-    postalCode: string,
-    coordinates: {
-      lat: number,
-      lng: number
-    },
-    country: string
-  },
-  macAddress: string,
-  university: string,
-  bank: {
-    cardExpire: string,
-    cardNumber: string,
-    cardType: string,
-    currency: string,
-    iban: string
-  },
-  company: {
-    department: string,
-    name: string,
-    title: string,
-    address: {
-      address: string,
-      city: string,
-      state: string,
-      stateCode: string,
-      postalCode: string,
-      coordinates: {
-        lat: number,
-        lng: number
-      },
-      country: string
+// class Product {
+//     constructor(
+//         public id: number,
+//         public title: string,
+//         public price: number
+//     ) {
+
+//     }
+// }
+
+// class Delivery {
+//     constructor(
+//         public date: Date
+//     ) {}
+// }
+
+// class HomeDelivery extends Delivery {
+//     constructor(date: Date, public adress: string) {
+//         super(date)
+//     }
+// }
+
+// class ShopDelivery extends Delivery {
+//     constructor(public shopId: number) {
+//         super(new Date)
+//     }
+// }
+
+// type DeliveryOptions = HomeDelivery | ShopDelivery;
+
+// class Cart {
+//     private products: Product[] = [];
+//     private delivery: DeliveryOptions
+
+//     public addProduct(product: Product): void {
+//         this.products.push(product)
+//     }
+
+//     public deleteProduct(productId: number): void {
+//         this.products = this.products.filter((p: Product) => p.id !== productId)
+//     }
+
+//     public getSum(): number {
+//         return this.products.map((p: Product) => p.price).reduce((p1: number, p2: number) => p1 + p2)
+//     }
+
+//     public setDelivery(delivery: DeliveryOptions): void {
+//         this.delivery = delivery;
+//     }
+
+//     public checkOut() {
+//         if (this.products.length === 0) {
+//             throw new Error('нет товаров в корзине')
+//         }
+//         if (!this.delivery) {
+//             throw new Error('не указан способ доставки')
+//         }
+//         return {success: true}
+//     }
+// }
+
+// делаем логгер
+// abstract class Logger {
+//     abstract log(message: string): void;
+
+//     printDate(date: Date) {
+//         this.log(date.toString());
+//     }
+// }
+
+// class MyLogger extends Logger {
+//     log(message: string): void {
+//         console.log(message)
+//     }
+
+//     logWithDate(message: string) {
+//         this.printDate(new Date());
+//         this.log(message);
+//     }
+// }
+
+// interface Data {
+//     group: number;
+//     name: string;
+// }
+
+// const data: Data[] = [
+//     { group: 1, name: 'a' },
+//     { group: 1, name: 'b' },
+//     { group: 2, name: 'c' },
+// ];
+
+// interface IGroup<T> {
+//     [key: string]: T[];
+// }
+
+// type key = string | number | symbol;
+
+// function group<T extends Record<key, any>>(array: T[], key: keyof T): IGroup<T> {
+//     return array.reduce<IGroup<T>>((map: IGroup<T>, item) => {
+//         const itemKey = item[key];
+//         let currentEl = map[itemKey]
+//         if (Array.isArray(currentEl)) {
+//             currentEl.push(item)
+//         } else {
+//             currentEl = [item];
+//         }
+//         map[itemKey] = currentEl;
+//         return map;
+//     }, {})
+// }
+
+// const res = group<Data>(data, 'group');
+// console.log(res);
+
+
+function swapKeysAndValues<T extends string>(obj: Record<T, number>): Record<number, T> {
+    const swappedObject = {} as Record<number, T>; 
+
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+            swappedObject[value] = key; 
+        }
     }
-  },
-  ein: string,
-  ssn: string,
-  userAgent: string,
-  crypto: {
-    coin: string,
-    wallet: string,
-    network: string
-  },
-  role: string
-} 
 
-interface UserResponse {
-  users: UserData[];
-  total: number;
-  skip: number;
-  limit: number;
+    return swappedObject;
 }
 
-const api = 'https://dummyjson.com/users';
-
-const fetchUsers = async (): Promise<UserResponse | null> => {
-  try {
-    const res = await axios.get<UserResponse>(api);
-    return res.data;
-  } catch(error) {
-    if (axios.isAxiosError(error)) {
-      console.error('ошибка запроса: ', error.message)
-    } else {
-      console.error('ошибка', error)
-    }
-    return null;
-  }
-}
-
-const getUsers = async () => {
-  const userResponse = await fetchUsers();
-  if (userResponse) {
-    console.log('список пользователей: ', userResponse.users)
-  } else {
-    console.log('ошибка получения пользователей')
-  }
-}
-
-getUsers();
+const originalObject = { A: 1, B: 2 };
+const swappedObject = swapKeysAndValues(originalObject);
+console.log(swappedObject);
